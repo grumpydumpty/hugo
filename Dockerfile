@@ -22,16 +22,35 @@ WORKDIR ${HOME}
 
 # update repositories, install packages, and then clean up
 RUN tdnf update -y && \
-    tdnf install -y ca-certificates gawk git nodejs tar && \
-    git config --global --add safe.directory /src && \
+    tdnf install -y ca-certificates curl diffutils gawk git nodejs shadow tar && \
+    # add user hugo
+    useradd -u 1000 -m hugo && \
+    chown -R 1000:100 /home/hugo && \
+    # add /workspace and give hugo permissions
+    mkdir -p /workspace && \
+    chown -R hugo /workspace && \
+    # set git config
+    #git config --global --add safe.directory /workspace && \
+    echo -e "[safe]\n\tdirectory=/workspace" > /etc/gitconfig && \
+    # install tini
+    export BUILDARCH="amd64" && \
+    export TINI_RELEASE=$(curl -s https://api.github.com/repos/krallin/tini/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}') && \
+    curl -L https://github.com/krallin/tini/releases/download/v${TINI_RELEASE}/tini-${BUILDARCH} > /usr/local/bin/tini && \
+    chmod 0755 /usr/local/bin/tini && \
+    # install hugo
     export VARIANT=${VARIANT} && \
     export VERSION=$(curl -s https://api.github.com/repos/gohugoio/hugo/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}') && \
-    curl -skSLo ${VERSION}.tar.gz https://github.com/gohugoio/hugo/releases/download/v${VERSION}/${VARIANT}_${VERSION}_Linux-${ARCH}.tar.gz && \
-    tar xzf ${VERSION}.tar.gz hugo && \
-    mv hugo /usr/local/bin && \
-    rm ${VERSION}.tar.gz && \
+    curl -sL https://github.com/gohugoio/hugo/releases/download/v${VERSION}/${VARIANT}_${VERSION}_Linux-${ARCH}.tar.gz | tar xz -C /usr/local/bin hugo && \
+    chmod 0755 /usr/local/bin/hugo && \
+    # clean up
     tdnf erase -y unzip && \
     tdnf clean all
+
+# set user
+USER hugo
+
+# set working directory
+WORKDIR /workspace
 
 # set entrypoint to hugo, not a shell
 ENTRYPOINT ["/usr/local/bin/hugo"]
