@@ -4,7 +4,7 @@ FROM photon:5.0
 ARG ARCH="64bit"
 ARG VARIANT="hugo_extended"
 ARG VERSION="0.111.3"
-ARG USER=hugo
+ARG USER=vlabs
 ARG USER_ID=1000
 ARG GROUP=users
 ARG GROUP_ID=100
@@ -23,15 +23,15 @@ ARG GROUP_ID=100
 
 # update repositories, install packages, and then clean up
 RUN tdnf update -y && \
+    # grab what we can via standard packages
     tdnf install -y ca-certificates curl diffutils gawk git nodejs shadow tar && \
-    # add user hugo
+    # add user/group
     useradd -u ${USER_ID} -m ${USER} && \
     chown -R ${USER_ID}:${GROUP_ID} /home/${USER} && \
-    # add /workspace and give hugo permissions
+    # add /workspace and give user permissions
     mkdir -p /workspace && \
     chown -R ${USER_ID}:${GROUP_ID} /workspace && \
     # set git config
-    #git config --global --add safe.directory /workspace && \
     echo -e "[safe]\n\tdirectory=/workspace" > /etc/gitconfig && \
     # install tini
     export BUILDARCH="amd64" && \
