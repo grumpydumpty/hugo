@@ -4,6 +4,10 @@ FROM photon:5.0
 ARG ARCH="64bit"
 ARG VARIANT="hugo_extended"
 ARG VERSION="0.111.3"
+ARG USER=hugo
+ARG USER_ID=1000
+ARG GROUP=users
+ARG GROUP_ID=100
 #ARG LABEL_PREFIX=com.vmware.eocto
 
 # add metadata via labels
@@ -14,21 +18,18 @@ ARG VERSION="0.111.3"
 #LABEL ${LABEL_PREFIX}.maintainer.email="rcroft@vmware.com"
 #LABEL ${LABEL_PREFIX}.maintainer.url="https://gitlab.eng.vmware.com/rcroft/"
 #LABEL ${LABEL_PREFIX}.released="9999-99-99"
-#LABEL ${LABEL_PREFIX}.based-on="photon:4.0"
+#LABEL ${LABEL_PREFIX}.based-on="photon:5.0"
 #LABEL ${LABEL_PREFIX}.project="containers"
-
-# set working to user's home directory
-WORKDIR ${HOME}
 
 # update repositories, install packages, and then clean up
 RUN tdnf update -y && \
     tdnf install -y ca-certificates curl diffutils gawk git nodejs shadow tar && \
     # add user hugo
-    useradd -u 1000 -m hugo && \
-    chown -R 1000:100 /home/hugo && \
+    useradd -u ${USER_ID} -m ${USER} && \
+    chown -R ${USER_ID}:${GROUP_ID} /home/${USER} && \
     # add /workspace and give hugo permissions
     mkdir -p /workspace && \
-    chown -R hugo /workspace && \
+    chown -R ${USER_ID}:${GROUP_ID} /workspace && \
     # set git config
     #git config --global --add safe.directory /workspace && \
     echo -e "[safe]\n\tdirectory=/workspace" > /etc/gitconfig && \
@@ -43,11 +44,11 @@ RUN tdnf update -y && \
     curl -sL https://github.com/gohugoio/hugo/releases/download/v${VERSION}/${VARIANT}_${VERSION}_Linux-${ARCH}.tar.gz | tar xz -C /usr/local/bin hugo && \
     chmod 0755 /usr/local/bin/hugo && \
     # clean up
-    tdnf erase -y unzip && \
+    tdnf erase -y unzip shadow && \
     tdnf clean all
 
 # set user
-USER hugo
+USER ${USER}
 
 # set working directory
 WORKDIR /workspace
