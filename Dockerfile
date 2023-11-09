@@ -3,7 +3,7 @@ FROM photon:5.0
 # set argument defaults
 ARG ARCH="64bit"
 ARG VARIANT="hugo_extended"
-ARG VERSION="0.111.3"
+# ARG VERSION="0.111.3"
 ARG USER=vlabs
 ARG USER_ID=1280
 ARG GROUP=users
