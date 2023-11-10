@@ -1,9 +1,8 @@
 FROM photon:5.0
 
 # set argument defaults
-ARG ARCH="64bit"
+ARG ARCH="amd64"
 ARG VARIANT="hugo_extended"
-# ARG VERSION="0.111.3"
 ARG USER=vlabs
 ARG USER_ID=1280
 ARG GROUP=users
@@ -24,7 +23,7 @@ ARG GROUP_ID=100
 # update repositories, install packages, and then clean up
 RUN tdnf update -y && \
     # grab what we can via standard packages
-    tdnf install -y ca-certificates curl diffutils gawk git nodejs shadow tar && \
+    tdnf install -y ca-certificates coreutils curl diffutils gawk git jq nodejs shadow tar && \
     # add user/group
     useradd -u ${USER_ID} -g ${GROUP} -m ${USER} && \
     chown -R ${USER}:${GROUP} /home/${USER} && \
@@ -34,15 +33,17 @@ RUN tdnf update -y && \
     # set git config
     echo -e "[safe]\n\tdirectory=/workspace" > /etc/gitconfig && \
     # install tini
-    export BUILDARCH="amd64" && \
-    export TINI_RELEASE=$(curl -s https://api.github.com/repos/krallin/tini/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}') && \
-    curl -L https://github.com/krallin/tini/releases/download/v${TINI_RELEASE}/tini-${BUILDARCH} > /usr/local/bin/tini && \
+    export TINI_VERSION=$(curl -H 'Accept: application/json' -sSL https://github.com/krallin/tini/releases/latest | jq -r '.tag_name' | tr -d 'v') && \
+    curl -L https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-${ARCH} > /usr/local/bin/tini && \
     chmod 0755 /usr/local/bin/tini && \
     # install hugo
     export VARIANT=${VARIANT} && \
-    export VERSION=$(curl -s https://api.github.com/repos/gohugoio/hugo/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}') && \
-    curl -sL https://github.com/gohugoio/hugo/releases/download/v${VERSION}/${VARIANT}_${VERSION}_Linux-${ARCH}.tar.gz | tar xz -C /usr/local/bin hugo && \
+    export HUGO_VERSION=$(curl -H 'Accept: application/json' -sSL https://github.com/gohugoio/hugo/releases/latest | jq -r '.tag_name' | tr -d 'v') && \
+    curl -skSLo hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/${VARIANT}_${HUGO_VERSION}_linux-${ARCH}.tar.gz && \
+    tar xzf hugo.tar.gz hugo && \    
+    mv hugo /usr/local/bin && \
     chmod 0755 /usr/local/bin/hugo && \
+    rm -rf hugo.tar.gz && \
     # clean up
     tdnf erase -y unzip shadow && \
     tdnf clean all
