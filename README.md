@@ -1,5 +1,7 @@
 # Container Image for Hugo on Photon OS
 
+![](logo.png)
+
 ## Status
 
 |                |                                                                                                                                                                          |
