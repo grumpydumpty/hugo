@@ -1,7 +1,7 @@
 # Project Information
 site_name: Hugo
 site_description: Docker container for build Hugo-based static websites.
-site_url: http://hugo.lab.net
+site_url: http://containers.lab.net/hugo
 site_author: Broadcom
 docs_dir: docs
 site_dir: .site

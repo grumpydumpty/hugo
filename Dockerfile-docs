@@ -41,7 +41,7 @@ LABEL com.vmware.eocto.project="containers/hugo"
 #RUN chown -R user:user /usr/local/apache2/htdocs/
 
 # copy the html to wwwroot
-COPY --from=builder /workspaces/.site/ ./
+COPY --from=builder /workspaces/.site/ ./hugo/
 #COPY --chmod=nobody:nogroup --from=builder /workspaces/.site/ ./
 #COPY --chmod=user:user --from=builder /workspaces/.site/ ./
 
