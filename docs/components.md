@@ -1,15 +1,7 @@
-# Components
-
-Provides a container image for running Hugo (extended).
 
 This image includes the following components:
 
-| Component        | Version  | Description                                                                 |
-|------------------|----------|-----------------------------------------------------------------------------|
-| VMware Photon OS | 4.0      | A Linux container host optimized for vSphere and cloud-computing platforms. |
-| NodeJS           |          |                                                                             |
-| Hugo             | Extended | A static website generator                                                  |
-
+<!-- DO NOT EDIT BELOW THIS LINE -->
 
 | Package/Tool                         | Version  |
 |--------------------------------------|----------|
