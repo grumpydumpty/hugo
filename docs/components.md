@@ -1,3 +1,10 @@
+---
+title: Components
+draft: false
+date: 2022-01-31
+authors:
+  - grumpydumpty
+---
 
 This image includes the following components:
 
