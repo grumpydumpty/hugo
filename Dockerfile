@@ -33,7 +33,7 @@ RUN tdnf update -y && \
     mkdir -p /workspace && \
     chown -R ${USER}:${GROUP} /workspace && \
     # set git config
-    echo -e "[safe]\n\tdirectory=/workspace" > /etc/gitconfig && \
+    git config --system --add safe.directory "/workspace" && \
     # install tini
     export TINI_VERSION=$(curl -H 'Accept: application/json' -sSL https://github.com/krallin/tini/releases/latest | jq -r '.tag_name' | tr -d 'v') && \
     curl -L https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-${ARCH} > /usr/local/bin/tini && \
