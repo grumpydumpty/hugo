@@ -99,3 +99,7 @@ These can be set at any level but we generally set them at the group or project 
 ## Package Versions
 
 <!-- snip -->
+| Package | Version |
+|---------|---------|
+| TINI | 0.19.0 |
+| HUGO | 0.125.1 |
