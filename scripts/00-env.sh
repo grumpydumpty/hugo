@@ -36,4 +36,5 @@ DOMAIN="lab.net"
 WORKDIR="/workspace"
 
 # repository to push image to
-REPO=harbor.sydeng.vmware.com/rcroft
+# REPO=harbor.sydeng.vmware.com/rcroft
+REPO=ghcr.io/grumpydumpty/${IMAGE}
