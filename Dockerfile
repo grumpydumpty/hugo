@@ -1,7 +1,7 @@
 FROM photon:5.0
 
 # set argument defaults
-ARG ARCH="amd64"
+ARG OS_ARCH="amd64"
 ARG VARIANT="hugo_extended"
 ARG USER=vlabs
 ARG USER_ID=1000
@@ -51,13 +51,13 @@ RUN tdnf update -y && \
 
 # install tini
 RUN TINI_VERSION=$(curl -H 'Accept: application/json' -sSL https://github.com/krallin/tini/releases/latest | jq -r '.tag_name' | tr -d 'v') && \
-    curl -L https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-${ARCH} > /usr/local/bin/tini && \
+    curl -L https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini-${OS_ARCH} > /usr/local/bin/tini && \
     chmod 0755 /usr/local/bin/tini
 
 # install hugo
-RUN VARIANT=${VARIANT} && \
+RUN HUGO_VARIANT=${VARIANT} && \
     HUGO_VERSION=$(curl -H 'Accept: application/json' -sSL https://github.com/gohugoio/hugo/releases/latest | jq -r '.tag_name' | tr -d 'v') && \
-    curl -skSLo hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/${VARIANT}_${HUGO_VERSION}_linux-${ARCH}.tar.gz && \
+    curl -skSLo hugo.tar.gz https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/${HUGO_VARIANT}_${HUGO_VERSION}_linux-${OS_ARCH}.tar.gz && \
     tar xzf hugo.tar.gz hugo && \    
     mv hugo /usr/local/bin && \
     chmod 0755 /usr/local/bin/hugo && \
